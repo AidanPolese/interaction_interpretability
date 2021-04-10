@@ -90,14 +90,17 @@ python models/autoint/train.py --exp baseline --data data/autoint/criteo --save_
 Then, run global interaction detection on this model.
 
 ```bash
-python detect_global_interactions.py --save_path experiments/autoint/criteo/baseline/1/ --data criteo --save_id SAVEID --par_batch_size par_batch_size
+python detect_global_interactions.py --save_path experiments/autoint/criteo/baseline/1/ --data criteo
 ```
 
+using defaul arguments instead
 * ```par_batch_size``` is the number of data instances to process in parallel. Set this based on the number of CPU processes and GPU memory available.
 * ``SAVEID`` shows up again later. Use a descriptive identifier.
 
 
 #### C. Cross Feature Generation
+
+This is where I cannot progress past
 
 To generate cross features:
 
