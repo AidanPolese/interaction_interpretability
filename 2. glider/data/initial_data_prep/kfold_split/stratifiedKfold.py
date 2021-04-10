@@ -46,11 +46,12 @@ def _load_data(_nrows=None, debug=False):
 
 
 def save_x_y(fold_index, train_x, train_y):
-    _get = lambda x, l: [x[i] for i in l]
+    def _get(x, l): return [x[i] for i in l]
     for i in range(len(fold_index)):
         print("now part %d" % (i + 1))
         part_index = fold_index[i]
-        Xv_train_, y_train_ = _get(train_x, part_index), _get(train_y, part_index)
+        Xv_train_, y_train_ = _get(
+            train_x, part_index), _get(train_y, part_index)
         save_dir_Xv = config.DATA_PATH + "part" + str(i + 1) + "/"
         save_dir_y = config.DATA_PATH + "part" + str(i + 1) + "/"
         if os.path.exists(save_dir_Xv) == False:
@@ -69,7 +70,7 @@ def save_x_y(fold_index, train_x, train_y):
 
 
 def save_i(fold_index):
-    _get = lambda x, l: [x[i] for i in l]
+    def _get(x, l): return [x[i] for i in l]
     train_i = pd.read_csv(
         config.TRAIN_I, header=None, sep=" ", nrows=None, dtype=np.int32
     )
@@ -121,7 +122,8 @@ def main():
     save_x_y(fold_index, train_x, train_y)
     print("save train_x_y done!")
 
-    fold_index = np.load(config.DATA_PATH + "fold_index.npy")
+    fold_index = np.load(config.DATA_PATH +
+                         "fold_index.npy", allow_pickle=True)
     save_i(fold_index)
     print("save index done!")
 

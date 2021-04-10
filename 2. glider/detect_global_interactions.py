@@ -1,19 +1,19 @@
+import torch.multiprocessing as multiprocessing
+from utils.global_interaction_utils import *
+import torch.optim as optim
+import torch
+import argparse
+import numpy as np
+import pickle
+import warnings
+from tqdm import tqdm
+import logging
+import os
+from neural_interaction_detection import detect_interactions
+from sampling_and_inference import generate_perturbation_dataset_autoint
 import sys
 
 sys.path.append("../1. madex")
-from sampling_and_inference import generate_perturbation_dataset_autoint
-from neural_interaction_detection import detect_interactions
-import os
-import logging
-from tqdm import tqdm
-import warnings
-import pickle
-import numpy as np
-import argparse
-import torch
-import torch.optim as optim
-from utils.global_interaction_utils import *
-import torch.multiprocessing as multiprocessing
 
 
 warnings.simplefilter("ignore")
@@ -33,7 +33,8 @@ parser.add_argument(
 )
 parser.add_argument("--epochs", type=int, help="num epochs", default=100)
 parser.add_argument("--es", type=int, help="enable early stopping", default=1)
-parser.add_argument("--l1", type=float, help="set l1 reg constant", default=1e-4)
+parser.add_argument("--l1", type=float,
+                    help="set l1 reg constant", default=1e-4)
 parser.add_argument("--lr", type=float, help="learning rate", default=0.01)
 parser.add_argument("--opt", type=str, help="optimizer", default="adam")
 parser.add_argument(
@@ -42,12 +43,14 @@ parser.add_argument(
     help="size of parallel batch (same as num parallel processes)",
     default=32,
 )
-parser.add_argument("--add_linear", type=int, help="contain main effects in interaction detector via linear regression", default=0)
-parser.add_argument("--detector", type=str, help="detector: NID or GradientNID", default="NID")
+parser.add_argument("--add_linear", type=int,
+                    help="contain main effects in interaction detector via linear regression", default=0)
+parser.add_argument("--detector", type=str,
+                    help="detector: NID or GradientNID", default="NID")
 parser.add_argument("--gpu", type=int, help="gpu number", default=0)
 
 args = parser.parse_args()
-par_batch_size = args.par_batch_size
+par_batch_size = int(args.par_batch_size)
 if args.opt == "adagrad":
     opt = optim.Adagrad
 elif args.opt == "adam":
@@ -63,7 +66,7 @@ def par_experiment(idx, perturbations):
     labels = perturbations["targets"]
 
 #     distributes processes across two gpus
-    device = torch.device("cuda:" + str(idx%2))
+    device = torch.device("cuda:" + str(idx % 2))
 
     try:
         inters, mlp_loss = detect_interactions(
@@ -123,7 +126,8 @@ def run():
     if os.path.exists(pkl_path):
         with open(pkl_path, "rb") as handle:
             interaction_results = pickle.load(handle)
-        print("loaded existing results. starting from index", len(interaction_results))
+        print("loaded existing results. starting from index",
+              len(interaction_results))
     else:
         if not os.path.exists(base_path):
             os.makedirs(base_path)
@@ -133,7 +137,7 @@ def run():
     num_par_batches = int(np.ceil(len(indexes) / par_batch_size))
 
     for b in tqdm(range(num_par_batches)):
-        index_batch = indexes[b * par_batch_size : (b + 1) * par_batch_size]
+        index_batch = indexes[b * par_batch_size: (b + 1) * par_batch_size]
         perturbation_batch = []
         for idx in index_batch:
 

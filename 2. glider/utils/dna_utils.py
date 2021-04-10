@@ -41,7 +41,7 @@ class conv1D(nn.Module):
 
 def load_dna_model(path):
     model = conv1D(4, 1, [64, 64], 5, 36)
-    model.load_state_dict(torch.load(path, map_location=torch.device('cpu')))
+    model.load_state_dict(torch.load(path))
     return model
 
 
